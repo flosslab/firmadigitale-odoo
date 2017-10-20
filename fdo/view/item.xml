@@ -1,0 +1,31 @@
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="fdo.view_item_tree">
+            <field name="name">fdo.view_item_tree</field>
+            <field name="model">fdo.item</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="attachment_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="fdo.view_item_form">
+            <field name="name">fdo.view_item_form</field>
+            <field name="model">fdo.item</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <group>
+                        <field name="attachment_id"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

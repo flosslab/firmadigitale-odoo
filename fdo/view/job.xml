@@ -1,0 +1,33 @@
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="fdo.view_job_tree">
+            <field name="name">fdo.view_job_tree</field>
+            <field name="model">fdo.job</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="session_id"/>
+                    <field name="action"/>
+                    <field name="attachment_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="fdo.view_job_form">
+            <field name="name">fdo.view_job_form</field>
+            <field name="model">fdo.job</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="session_id"/>
+                    </group>
+                    <group>
+                        <field name="action"/>
+                        <field name="attachment_id"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

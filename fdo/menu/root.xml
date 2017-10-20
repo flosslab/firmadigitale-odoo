@@ -1,0 +1,6 @@
+<openerp>
+    <data>
+        <menuitem id="fdo.menu_fdo"
+                  name="Digital Signature"/>
+    </data>
+</openerp>

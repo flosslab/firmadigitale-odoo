@@ -1,0 +1,28 @@
+<openerp>
+    <data>
+        <record model="ir.actions.act_window" id="fdo.action_session_list">
+            <field name="name">Sessions</field>
+            <field name="res_model">fdo.session</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="fdo.action_job_list">
+            <field name="name">Jobs</field>
+            <field name="res_model">fdo.job</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="fdo.action_item_list">
+            <field name="name">Items</field>
+            <field name="res_model">fdo.item</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="fdo.action_item_create">
+            <field name="name">Item Create</field>
+            <field name="res_model">fdo.wizard_item_create</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

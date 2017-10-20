@@ -1,0 +1,21 @@
+<openerp>
+    <data>
+        <menuitem id="fdo.menu_fdo_development"
+                  parent="fdo.menu_fdo"
+                  name="Development"
+                  sequence="1"/>
+
+        <menuitem id="fdo.menu_fdo_development_item"
+                  parent="fdo.menu_fdo_development"
+                  name="Items"
+                  action="fdo.action_item_list"
+                  sequence="0"/>
+
+        <menuitem id="fdo.menu_fdo_development_item_wizard_create"
+                  parent="fdo.menu_fdo_development"
+                  name="Create Item"
+                  action="fdo.action_item_create"
+                  sequence="1"/>
+
+    </data>
+</openerp>

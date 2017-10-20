@@ -1,0 +1,21 @@
+<openerp>
+    <data>
+        <menuitem id="fdo.menu_fdo_tool"
+                  parent="fdo.menu_fdo"
+                  name="Items for client"
+                  sequence="0"/>
+
+        <menuitem id="fdo.menu_fdo_tool_session"
+                  parent="fdo.menu_fdo_tool"
+                  name="Sessions"
+                  action="fdo.action_session_list"
+                  sequence="0"/>
+
+        <menuitem id="fdo.menu_fdo_tool_job"
+                  parent="fdo.menu_fdo_tool"
+                  name="Jobs"
+                  action="fdo.action_job_list"
+                  sequence="1"/>
+
+    </data>
+</openerp>

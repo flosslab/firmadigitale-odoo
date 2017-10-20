@@ -1,0 +1,35 @@
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="fdo.view_session_tree">
+            <field name="name">fdo.view_session_tree</field>
+            <field name="model">fdo.session</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="token"/>
+                    <field name="user_id"/>
+                    <field name="link"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="fdo.view_session_form">
+            <field name="name">fdo.view_session_form</field>
+            <field name="model">fdo.session</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="token"/>
+                    </group>
+                    <group>
+                        <field name="user_id"/>
+                    </group>
+                    <group>
+                        <field name="link"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

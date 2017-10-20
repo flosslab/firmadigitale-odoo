@@ -1,0 +1,23 @@
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="fdo.wizard_item_create_form">
+            <field name="name">Wizard Item creation</field>
+            <field name="model">fdo.wizard_item_create</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="name"/>
+                        <field name="file" filename="file_fname"/>
+                        <field name="file_fname" attrs="{'invisible': 1}"/>
+                    </group>
+                    <group>
+                        <button name="action_create"
+                                string="Create Item"
+                                type="object"
+                                class="btn-primary"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp>
