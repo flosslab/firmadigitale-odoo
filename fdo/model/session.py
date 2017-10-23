@@ -6,6 +6,7 @@ from openerp.osv import fields, osv
 class Session(osv.Model):
     _name = "fdo.session"
     _description = "Session for FDO Tool"
+    _rec_name = "token"
 
     def _compute_link(self, cr, uid, ids, field_name, args, context=None):
         res = {}
