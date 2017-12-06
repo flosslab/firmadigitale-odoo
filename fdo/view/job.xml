@@ -9,6 +9,7 @@
                     <field name="session_id"/>
                     <field name="action"/>
                     <field name="attachment_id"/>
+                    <field name="status"/>
                 </tree>
             </field>
         </record>
@@ -24,6 +25,9 @@
                     <group>
                         <field name="action"/>
                         <field name="attachment_id"/>
+                    </group>
+                    <group>
+                        <field name="status"/>
                     </group>
                 </form>
             </field>

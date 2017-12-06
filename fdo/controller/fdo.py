@@ -2,6 +2,7 @@ import base64
 import logging
 
 from openerp import http
+from openerp.osv import fields
 from openerp.tools.translate import _
 
 
@@ -21,6 +22,7 @@ class FDOController(http.Controller):
     )
     def bootstrap(self, token):
         env = http.request.env
+
         session_id = self._get_session(env, token)
         if len(session_id) == 0:
             return {
@@ -29,16 +31,61 @@ class FDOController(http.Controller):
             }
 
         user_id = session_id.user_id
-        job_ids = self._get_orm(env, user_id, "fdo.job").search([
+        session_obj = self._get_orm(env, user_id, "fdo.session")
+        if session_id.status != session_obj.STATUS_PREPARED[0]:
+            return {
+                "success": False,
+                "error": _("Session already worked")
+            }
+
+        job_obj = self._get_orm(env, user_id, "fdo.job")
+        job_ids = job_obj.search([
             "&",
-            ("processed", "=", False),
+            ("status", "=", job_obj.STATUS_PREPARED[0]),
             ("session_id", "=", session_id.id)
         ])
+
+        session_id.write({
+            "status": session_obj.STATUS_WORKING[0],
+            "last_contact": fields.datetime.now()
+        })
 
         return {
             "success": True,
             "userName": user_id.name,
             "jobsIds": job_ids.ids
+        }
+
+    @http.route(
+        route="/fdo/1/action/ping",
+        auth="public",
+        type="json",
+        csrf=False
+    )
+    def ping(self, token):
+        env = http.request.env
+
+        session_id = self._get_session(env, token)
+        if len(session_id) == 0:
+            return {
+                "success": False,
+                "error": _("Token not found")
+            }
+
+        user_id = session_id.user_id
+        session_obj = self._get_orm(env, user_id, "fdo.session")
+        if session_id.status != session_obj.STATUS_WORKING[0]:
+            return {
+                "success": False,
+                "error": _("Wrong session")
+            }
+
+        session_id.write({
+            "last_contact": fields.datetime.now()
+        })
+
+        return {
+            "success": True,
         }
 
     @http.route(
@@ -49,6 +96,7 @@ class FDOController(http.Controller):
     )
     def get_job(self, token, jobId):
         env = http.request.env
+
         session_id = self._get_session(env, token)
         if len(session_id) == 0:
             return {
@@ -57,18 +105,29 @@ class FDOController(http.Controller):
             }
 
         user_id = session_id.user_id
-        job_id = self._get_orm(env, user_id, "fdo.job").search([
+        session_obj = self._get_orm(env, user_id, "fdo.session")
+        if session_id.status != session_obj.STATUS_WORKING[0]:
+            return {
+                "success": False,
+                "error": _("Session already worked")
+            }
+
+        job_obj = self._get_orm(env, user_id, "fdo.job")
+        job_id = job_obj.search([
             "&", "&",
             ("id", "=", jobId),
-            ("processed", "=", False),
+            ("status", "=", job_obj.STATUS_PREPARED[0]),
             ("session_id", "=", session_id.id)
         ], limit=1)
-
         if len(job_id) == 0:
             return {
                 "success": False,
                 "error": _("Job not found")
             }
+
+        job_id.write({
+            "status": job_obj.STATUS_WORKING[0]
+        })
 
         return {
             "success": True,
@@ -84,6 +143,7 @@ class FDOController(http.Controller):
     )
     def get_attachment(self, token, jobId, attachmentId):
         env = http.request.env
+
         session_id = self._get_session(env, token)
         if len(session_id) == 0:
             return {
@@ -92,13 +152,20 @@ class FDOController(http.Controller):
             }
 
         user_id = session_id.user_id
-        job_id = self._get_orm(env, user_id, "fdo.job").search([
+        session_obj = self._get_orm(env, user_id, "fdo.session")
+        if session_id.status != session_obj.STATUS_WORKING[0]:
+            return {
+                "success": False,
+                "error": _("Session already worked")
+            }
+
+        job_obj = self._get_orm(env, user_id, "fdo.job")
+        job_id = job_obj.search([
             "&", "&",
             ("id", "=", jobId),
-            ("processed", "=", False),
+            ("status", "=", job_obj.STATUS_WORKING[0]),
             ("session_id", "=", session_id.id)
         ], limit=1)
-
         if len(job_id) == 0:
             return {
                 "success": False,
@@ -125,6 +192,7 @@ class FDOController(http.Controller):
     )
     def upload_signed(self, token, jobId, attachmentId, signedContent):
         env = http.request.env
+
         session_id = self._get_session(env, token)
         if len(session_id) == 0:
             return {
@@ -133,13 +201,20 @@ class FDOController(http.Controller):
             }
 
         user_id = session_id.user_id
-        job_id = self._get_orm(env, user_id, "fdo.job").search([
+        session_obj = self._get_orm(env, user_id, "fdo.session")
+        if session_id.status != session_obj.STATUS_WORKING[0]:
+            return {
+                "success": False,
+                "error": _("Session already worked")
+            }
+
+        job_obj = self._get_orm(env, user_id, "fdo.job")
+        job_id = job_obj.search([
             "&", "&",
             ("id", "=", jobId),
-            ("processed", "=", False),
+            ("status", "=", job_obj.STATUS_WORKING[0]),
             ("session_id", "=", session_id.id)
         ], limit=1)
-
         if len(job_id) == 0:
             return {
                 "success": False,
@@ -161,15 +236,28 @@ class FDOController(http.Controller):
             }
 
         attachment_name = "signed-%s" % attachment_id.name
-        attachment_datas_fname = "signed-" % attachment_id.datas_fname
-        signed_attachment_id = self._get_orm("ir.attachment").create({
+        attachment_datas_fname = "signed-%s" % str(attachment_id.datas_fname)
+
+        ir_attachment_obj = self._get_orm(env, user_id, "ir.attachment")
+        signed_attachment_id = ir_attachment_obj.create({
             "name": attachment_name,
             "datas_fname": attachment_datas_fname,
             "type": "binary",
             "datas": signedContent,
-            "res_model": attachment_id.res_model.id,
-            "res_id": attachment_id.res_id
+            "res_model": attachment_id.res_model,
+            "res_id": attachment_id.res_id,
+            "original_attachment_id": attachment_id.id
         })
+
+        attachment_id.write({
+            "signed_attachment_id": [(4, signed_attachment_id.id)]
+        })
+
+        job_id.write({
+            "status": job_obj.STATUS_COMPLETED[0]
+        })
+
+        self._sanitize_session(env, session_id.id)
 
         return {
             "success": True,
@@ -186,3 +274,31 @@ class FDOController(http.Controller):
     @staticmethod
     def _get_orm(env, user, model):
         return env[model].sudo(user=user)
+
+    @staticmethod
+    def _sanitize_session(env, sessionid):
+        session_obj = env["fdo.session"].sudo()
+        job_obj = env["fdo.job"].sudo()
+
+        session_id = session_obj.search([
+            ("id", "=", sessionid)
+        ], limit=1)
+        if len(session_id) == 0:
+            return
+
+        job_total = job_obj.search([
+            ("session_id", "=", session_id.id)
+        ], count=True)
+        if job_total == 0:
+            return
+
+        job_finish = job_obj.search([
+            "&",
+            ("session_id", "=", session_id.id),
+            ("status", "in", [job_obj.STATUS_COMPLETED[0], job_obj.STATUS_ERROR[0]])
+        ], count=True)
+
+        if job_finish == job_total:
+            session_id.write({
+                "status": session_obj.STATUS_COMPLETED[0]
+            })

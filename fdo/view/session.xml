@@ -9,6 +9,7 @@
                     <field name="token"/>
                     <field name="user_id"/>
                     <field name="link"/>
+                    <field name="status"/>
                 </tree>
             </field>
         </record>
@@ -20,12 +21,13 @@
                 <form>
                     <group>
                         <field name="token"/>
+                        <field name="link"/>
                     </group>
                     <group>
                         <field name="user_id"/>
                     </group>
                     <group>
-                        <field name="link"/>
+                        <field name="status"/>
                     </group>
                 </form>
             </field>

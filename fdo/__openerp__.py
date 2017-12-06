@@ -22,6 +22,7 @@ This module adds the digital sign feature to ir_attachments
         "view/session.xml",
         "view/job.xml",
         "view/item.xml",
+        "view/ir_attachment.xml",
         "wizard/item_create.xml"
     ],
     "installable": True
