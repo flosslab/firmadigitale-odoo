@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign</title>
+    <script type="text/javascript" src="/fdo/static/js/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+    var sessionId = "####SESSION_ID####";
+    var sessionLink = "####SESSION_LINK####";
+
+    var statusCompleted = "####STATUS_COMPLETED####";
+    var statusError = "####STATUS_ERROR####";
+
+    function queryServer() {
+        var requestData = JSON.stringify({
+            jsonrpc: "2.0",
+            method: "status",
+            params: {
+                "sessionId": parseInt(sessionId)
+            },
+            id: "jsonrpc"
+        });
+
+        $.ajax({
+            url: "/fdo/session/status",
+            type: "POST",
+            data: requestData,
+            dataType: "json",
+            contentType: "application/json",
+            success: function (result) {
+                console.log(result);
+                var response = JSON.parse(result.result);
+
+                var status = response.status;
+                var progressDiv = $("#progress");
+
+                if (status === statusCompleted || status === statusError) {
+                    var redirect_url = response.redirect_url;
+                    console.log(redirect_url);
+                    window.location.replace(redirect_url);
+                } else {
+                    var progress = progressDiv.html();
+                    console.log(progress);
+                    progress = progress + "#";
+                    progressDiv.html(progress);
+
+                    setTimeout(queryServer, 1500);
+                }
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#session_id").text(sessionId);
+        $("#session_link").replaceWith($("<a></a>").attr("href", sessionLink).html(sessionLink));
+
+        var newWindow = window.open(sessionLink, "Sign", "Settings");
+        $(newWindow).ready(function () {
+            newWindow.setTimeout(newWindow.close, 500);
+        });
+
+        setTimeout(queryServer, 0);
+    });
+</script>
+<h1>Session <span id="session_id"></span></h1>
+<h2>Link: <span id="session_link"></span></h2>
+<div id="progress"></div>
+</body>
+</html>

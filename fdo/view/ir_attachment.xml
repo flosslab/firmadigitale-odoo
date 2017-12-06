@@ -1,0 +1,32 @@
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="fdo.ir_attachment_form">
+            <field name="name">fdo.view_item_tree</field>
+            <field name="model">ir.attachment</field>
+            <field name="inherit_id" ref="base.view_attachment_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@string='Attached To']" position="after">
+                    <group string="Digital signature">
+                        <button name="action_sign"
+                                string="Sign attachment"
+                                type="object"
+                                class="oe_highlight"/>
+                    </group>
+                    <group attrs="{'invisible': [('original_attachment_id', '=', False)]}">
+                        <field name="original_attachment_id"/>
+                    </group>
+                    <group attrs="{'invisible': [('signed_attachment_id', '=', False)]}">
+                        <field name="signed_attachment_id">
+                            <tree>
+                                <field name="create_date"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
