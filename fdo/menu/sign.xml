@@ -1,0 +1,9 @@
+<openerp>
+    <data>
+        <record model="ir.actions.act_window" id="fdo.action_ir_attachment">
+            <field name="name">Attachment</field>
+            <field name="res_model">ir.attachment</field>
+            <field name="view_mode">form</field>
+        </record>
+    </data>
+</openerp>

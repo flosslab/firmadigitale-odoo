@@ -69,8 +69,8 @@ class SignController(http.Controller):
                     obj_model="ir.attachment",
                     obj_id=attachment_id.signed_attachment_id[0].id,
                     view_type="form",
-                    menu_id=None,
-                    action=None
+                    menu_id=env.ref("fdo.menu_fdo_tool_mysigned").id,
+                    action=env.ref("fdo.action_irattachment_list_signed").id
                 )
 
                 return json.dumps({
@@ -105,6 +105,6 @@ class SignController(http.Controller):
         if menu_id:
             items.append("menu_id=%d" % int(menu_id))
         if action:
-            items.append("action=%d" % str(action))
+            items.append("action=%d" % int(action))
 
         return "/web?#" + "&".join(items)

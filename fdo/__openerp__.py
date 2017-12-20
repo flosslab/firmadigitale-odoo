@@ -16,6 +16,7 @@ This module adds the digital sign feature to ir_attachments
     ],
     "data": [
         "menu/action.xml",
+        "menu/sign.xml",
         "menu/root.xml",
         "menu/tool.xml",
         "menu/development.xml",

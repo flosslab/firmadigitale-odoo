@@ -10,8 +10,6 @@ class FDOController(http.Controller):
     def __init__(self):
         self._logger = logging.getLogger(__name__)
 
-        self._user_id = None
-
         super(FDOController, self).__init__()
 
     @http.route(
@@ -32,11 +30,11 @@ class FDOController(http.Controller):
 
         user_id = session_id.user_id
         session_obj = self._get_orm(env, user_id, "fdo.session")
-        if session_id.status != session_obj.STATUS_PREPARED[0]:
-            return {
-                "success": False,
-                "error": _("Session already worked")
-            }
+        # if session_id.status != session_obj.STATUS_PREPARED[0]:
+        #     return {
+        #         "success": False,
+        #         "error": _("Session already worked")
+        #     }
 
         job_obj = self._get_orm(env, user_id, "fdo.job")
         job_ids = job_obj.search([
@@ -46,7 +44,7 @@ class FDOController(http.Controller):
         ])
 
         session_id.write({
-            "status": session_obj.STATUS_WORKING[0],
+            # "status": session_obj.STATUS_WORKING[0],
             "last_contact": fields.datetime.now()
         })
 
@@ -74,11 +72,11 @@ class FDOController(http.Controller):
 
         user_id = session_id.user_id
         session_obj = self._get_orm(env, user_id, "fdo.session")
-        if session_id.status != session_obj.STATUS_WORKING[0]:
-            return {
-                "success": False,
-                "error": _("Wrong session")
-            }
+        # if session_id.status != session_obj.STATUS_WORKING[0]:
+        #     return {
+        #         "success": False,
+        #         "error": _("Wrong session")
+        #     }
 
         session_id.write({
             "last_contact": fields.datetime.now()
@@ -106,17 +104,17 @@ class FDOController(http.Controller):
 
         user_id = session_id.user_id
         session_obj = self._get_orm(env, user_id, "fdo.session")
-        if session_id.status != session_obj.STATUS_WORKING[0]:
-            return {
-                "success": False,
-                "error": _("Session already worked")
-            }
+        # if session_id.status != session_obj.STATUS_WORKING[0]:
+        #     return {
+        #         "success": False,
+        #         "error": _("Session already worked")
+        #     }
 
         job_obj = self._get_orm(env, user_id, "fdo.job")
         job_id = job_obj.search([
-            "&", "&",
+            "&",
             ("id", "=", jobId),
-            ("status", "=", job_obj.STATUS_PREPARED[0]),
+            # ("status", "=", job_obj.STATUS_PREPARED[0]),
             ("session_id", "=", session_id.id)
         ], limit=1)
         if len(job_id) == 0:
@@ -125,9 +123,9 @@ class FDOController(http.Controller):
                 "error": _("Job not found")
             }
 
-        job_id.write({
-            "status": job_obj.STATUS_WORKING[0]
-        })
+        # job_id.write({
+        #     "status": job_obj.STATUS_WORKING[0]
+        # })
 
         return {
             "success": True,
@@ -153,17 +151,17 @@ class FDOController(http.Controller):
 
         user_id = session_id.user_id
         session_obj = self._get_orm(env, user_id, "fdo.session")
-        if session_id.status != session_obj.STATUS_WORKING[0]:
-            return {
-                "success": False,
-                "error": _("Session already worked")
-            }
+        # if session_id.status != session_obj.STATUS_WORKING[0]:
+        #     return {
+        #         "success": False,
+        #         "error": _("Session already worked")
+        #     }
 
         job_obj = self._get_orm(env, user_id, "fdo.job")
         job_id = job_obj.search([
-            "&", "&",
+            "&",
             ("id", "=", jobId),
-            ("status", "=", job_obj.STATUS_WORKING[0]),
+            # ("status", "=", job_obj.STATUS_WORKING[0]),
             ("session_id", "=", session_id.id)
         ], limit=1)
         if len(job_id) == 0:
@@ -202,17 +200,17 @@ class FDOController(http.Controller):
 
         user_id = session_id.user_id
         session_obj = self._get_orm(env, user_id, "fdo.session")
-        if session_id.status != session_obj.STATUS_WORKING[0]:
-            return {
-                "success": False,
-                "error": _("Session already worked")
-            }
+        # if session_id.status != session_obj.STATUS_WORKING[0]:
+        #     return {
+        #         "success": False,
+        #         "error": _("Session already worked")
+        #     }
 
         job_obj = self._get_orm(env, user_id, "fdo.job")
         job_id = job_obj.search([
-            "&", "&",
+            "&",
             ("id", "=", jobId),
-            ("status", "=", job_obj.STATUS_WORKING[0]),
+            # ("status", "=", job_obj.STATUS_WORKING[0]),
             ("session_id", "=", session_id.id)
         ], limit=1)
         if len(job_id) == 0:
@@ -253,11 +251,11 @@ class FDOController(http.Controller):
             "signed_attachment_id": [(4, signed_attachment_id.id)]
         })
 
-        job_id.write({
-            "status": job_obj.STATUS_COMPLETED[0]
-        })
-
-        self._sanitize_session(env, session_id.id)
+        # job_id.write({
+        #     "status": job_obj.STATUS_COMPLETED[0]
+        # })
+        #
+        # self._sanitize_session(env, session_id.id)
 
         return {
             "success": True,
@@ -283,12 +281,14 @@ class FDOController(http.Controller):
         session_id = session_obj.search([
             ("id", "=", sessionid)
         ], limit=1)
+
         if len(session_id) == 0:
             return
 
         job_total = job_obj.search([
             ("session_id", "=", session_id.id)
         ], count=True)
+
         if job_total == 0:
             return
 

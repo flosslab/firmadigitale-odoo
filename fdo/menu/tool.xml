@@ -17,5 +17,11 @@
                   action="fdo.action_job_list"
                   sequence="1"/>
 
+        <menuitem id="fdo.menu_fdo_tool_mysigned"
+                  parent="fdo.menu_fdo_tool"
+                  name="My Signed files"
+                  action="fdo.action_irattachment_list_signed"
+                  sequence="2"/>
+
     </data>
 </openerp>

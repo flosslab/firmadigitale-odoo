@@ -24,5 +24,11 @@
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
+
+        <record model="ir.actions.act_window" id="fdo.action_irattachment_list_signed">
+            <field name="name">My Signed files</field>
+            <field name="res_model">ir.attachment</field>
+            <field name="view_mode">form,tree</field>
+        </record>
     </data>
 </openerp>
